@@ -1,4 +1,4 @@
-# For RMM scripts that change user passwords, this is a handy bit to validate the input supplied at runtime
+# For RMM scripts that change user passwords, this is a handy function to validate the input supplied at runtime
 # The $illegalSubstring could be an array in a future version, so multiple banned words can be refused
 
 
