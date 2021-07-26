@@ -1,6 +1,6 @@
 # Script to search event logs for records of failed Azure Backup (MARS) jobs
 # Intended to be run daily via RMM, and create alerts based on output
-# Makes sure a failed backup job did NOT occurr today, and that a backup DID occur within the last 3 days
+# Makes sure a failed backup job did NOT occur today, and that a backup DID occur within the last 3 days
 
 
 
