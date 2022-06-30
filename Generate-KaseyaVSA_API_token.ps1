@@ -88,46 +88,54 @@ Function Base64Encode-String() {
 
 
 # The API URL
-$apiURL = "https://<your-server>/api/v1.0"
+$apiURL = "https://<your-server>.net/api/v1.0"
 
 
 
 # Generate a random INT
-$Random = Get-Random -Minimum 100000 -Maximum 2147483647    # Does this actually need to be an MFA code?
+$Random = Get-Random -Minimum 10000 -Maximum 2147483647    # Does this actually need to be an MFA code?
 
 
 
 # First prompt for the username and password
+Write-Host `r`n
 $vsa_username = Read-Host Enter your VSA username
 $vsa_password = Read-Host Enter your VSA password
 Write-Host `r`n
 $vsa_concatted = $vsa_password + $vsa_username
+Write-Host random int: $Random
+Write-Host `r`n
 
 
 
 # The building blocks of the auth string - SHA256 parts
 $RawSHA256Hash = Hash-String -RawString $vsa_password -Algorithm SHA256
+Write-Host RawSHA256Hash: $RawSHA256Hash
 $CoveredSHA256HashTemp = Hash-String -RawString $vsa_concatted -Algorithm SHA256
 $hash256Rand = "$CoveredSHA256HashTemp" + "$Random"
-Write-Host hash256 and rand: $hash256Rand
 $CoveredSHA256Hash = Hash-String -RawString $hash256Rand -Algorithm SHA256
-Write-Host hashed256: $CoveredSHA256Hash
+Write-Host CoveredSHA256Hash: $CoveredSHA256Hash
+Write-Host `r`n
 
 
 
 # The building blocks of the auth string - SHA1 parts
 $RawSHA1Hash = Hash-String -RawString $vsa_password -Algorithm SHA1
+Write-Host RawSHA1Hash: $RawSHA1Hash
 $CoveredSHA1HashTemp = Hash-String -RawString $vsa_concatted -Algorithm SHA1
 $hash1Rand = "$CoveredSHA1HashTemp" + "$Random"
-Write-Host hash1 and rand: $hash1rand
 $CoveredSHA1Hash = Hash-String -RawString $hash1Rand -Algorithm SHA1
-Write-Host hashed1: $CoveredSHA1Hash
+Write-Host CoveredSHA1Hash: $CoveredSHA1Hash
 
 
 
 # The auth string
+$authStringFmt = "user={Username},pass2={CoveredSHA256Hash},pass1={CoveredSHA1Hash},rpass2={RawSHA256Hash},rpass1={RawSHA1Hash},rand2={Random}"
 $authString = "user={$vsa_username},pass2={$CoveredSHA256Hash},pass1={$CoveredSHA1Hash},rpass2={$RawSHA256Hash},rpass1={$RawSHA1Hash},rand2={$Random}"
-Write-Host Auth String: $authString
+Write-Host `r`n
+Write-Host Auth String format: $authStringFmt
+Write-Host `r`n
+Write-Host Final Auth String: $authString
 Write-Host `r`n`r`n
 
 
