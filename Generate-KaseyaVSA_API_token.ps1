@@ -151,6 +151,7 @@ Write-Host `r`n`r`n
 
 
 
+<#
 # This last bit borrowed shamelessly from: https://github.com/aaronengels/KaseyaVSA/blob/main/functions/New-ApiAccessToken.ps1
 # Define parameters for Invoke-WebRequest cmdlet
 $params = [ordered] @{
@@ -159,6 +160,14 @@ $params = [ordered] @{
 	ContentType 	= 'application/json; charset=utf-8'
 	Headers     	= @{'Authorization' = "Basic $authString64"}
 }
+#>
+
+
+
+# Fetch new access token
+#$response = Invoke-RestMethod @params
+#$authToken = $response.result.token
+#Write-Host Token: $authToken
 
 
 
@@ -172,10 +181,4 @@ $headers = @{
 $response = Invoke-RestMethod -Method Get -Uri "$apiUrl/auth" -Headers $headers
 Write-Host $response
 
-
-
-# Fetch new access token
-#$response = Invoke-RestMethod @params
-#$authToken = $response.result.token
-#Write-Host Token: $authToken
 
