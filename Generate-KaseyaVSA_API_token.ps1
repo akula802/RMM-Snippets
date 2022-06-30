@@ -93,14 +93,14 @@ Function Base64Encode-String() {
 
 
 # The API URL
-$apiURL = "https://<your_kaseya_server>"
+$apiURL = "https://<your-server>/api/v1.0"
 
 
 
 # Generate a random INT
-$Random = Get-Random -Minimum 100000 -Maximum 2147483647
+$Random = Get-Random -Minimum 100000 -Maximum 2147483647    # Does this actually need to be an MFA code?
 Write-Host `r`n
-Write-Host Random Int: $Random
+#Write-Host Random Int: $Random
 Write-Host `r`n
 
 
@@ -108,6 +108,7 @@ Write-Host `r`n
 # First prompt for the username and password
 $vsa_username = Read-Host Enter your VSA username
 $vsa_password = Read-Host Enter your VSA password
+#$Random = Read-Host Enter MFA code
 Write-Host `r`n
 $vsa_concatted = $vsa_password + $vsa_username
 
@@ -116,16 +117,20 @@ $vsa_concatted = $vsa_password + $vsa_username
 # The building blocks of the auth string - SHA256 parts
 $RawSHA256Hash = Hash-String -RawString $vsa_password -Algorithm SHA256
 $CoveredSHA256HashTemp = Hash-String -RawString $vsa_concatted -Algorithm SHA256
-$hash256Rand = $CoveredSHA256HashTemp + $Random
+$hash256Rand = "$CoveredSHA256HashTemp" + "$Random"
+Write-Host hash256 and rand: $hash256Rand
 $CoveredSHA256Hash = Hash-String -RawString $hash256Rand -Algorithm SHA256
+Write-Host hashed256: $CoveredSHA256Hash
 
 
 
 # The building blocks of the auth string - SHA1 parts
 $RawSHA1Hash = Hash-String -RawString $vsa_password -Algorithm SHA1
 $CoveredSHA1HashTemp = Hash-String -RawString $vsa_concatted -Algorithm SHA1
-$hash1Rand = $CoveredSHA1HashTemp + $Random
+$hash1Rand = "$CoveredSHA1HashTemp" + "$Random"
+Write-Host hash1 and rand: $hash1rand
 $CoveredSHA1Hash = Hash-String -RawString $hash1Rand -Algorithm SHA1
+Write-Host hashed1: $CoveredSHA1Hash
 
 
 
@@ -149,17 +154,29 @@ Write-Host `r`n`r`n
 
 # This last bit borrowed shamelessly from: https://github.com/aaronengels/KaseyaVSA/blob/main/functions/New-ApiAccessToken.ps1
 # Define parameters for Invoke-WebRequest cmdlet
-	$params = [ordered] @{
-		Uri         	= '{0}/api/v1.0/auth' -f $apiUrl
-		Method      	= 'GET'
-		ContentType 	= 'application/json; charset=utf-8'
-		Headers     	= @{'Authorization' = "Basic $authString64"}
-	}
+$params = [ordered] @{
+	Uri         	= '{0}/api/v1.0/auth' -f $apiUrl
+	Method      	= 'GET'
+	ContentType 	= 'application/json; charset=utf-8'
+	Headers     	= @{'Authorization' = "Basic $authString64"}
+}
+
+
+
+$headers = @{
+    'Authorization' = "Basic $authString64";
+    'Content-Type' = 'application-json'
+}
+
+
+
+$response = Invoke-RestMethod -Method Get -Uri "$apiUrl/auth" -Headers $headers
+Write-Host $response
 
 
 
 # Fetch new access token
-$response = Invoke-RestMethod @params
-$authToken = $response.result.token
-Write-Host Token: $authToken
+#$response = Invoke-RestMethod @params
+#$authToken = $response.result.token
+#Write-Host Token: $authToken
 
