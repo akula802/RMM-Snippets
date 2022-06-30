@@ -34,11 +34,6 @@ NDY1NixycGFzczI9ZjE5ZWFmYzY3ZWY5MzJjMjBkMTlmZGQ1ZmIyZTY1NjBkY2U5YTk1YWFhYjEwNjcz
 ODY2ZTQxZCxycGFzczE9MGRjMGZmOWMwZDRlZDA0ZTgyYmM2ZmE5NGU2NzU0MzIxYTA4MjM3NSx0d29mYXBhc3M9OnVu
 ZGVmaW5lZA==
 
-
-$mystring = "Some string and text content here"
-$mystream = [IO.MemoryStream]::new([byte[]][char[]]$mystring)
-Get-FileHash -InputStream $mystream -Algorithm SHA256
-
 #>
 
 
@@ -99,16 +94,12 @@ $apiURL = "https://<your-server>/api/v1.0"
 
 # Generate a random INT
 $Random = Get-Random -Minimum 100000 -Maximum 2147483647    # Does this actually need to be an MFA code?
-Write-Host `r`n
-#Write-Host Random Int: $Random
-Write-Host `r`n
 
 
 
 # First prompt for the username and password
 $vsa_username = Read-Host Enter your VSA username
 $vsa_password = Read-Host Enter your VSA password
-#$Random = Read-Host Enter MFA code
 Write-Host `r`n
 $vsa_concatted = $vsa_password + $vsa_username
 
